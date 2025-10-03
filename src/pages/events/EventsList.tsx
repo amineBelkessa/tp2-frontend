@@ -5,6 +5,13 @@ import type { Event } from "../../types";
 import ErrorBanner from "../../components/ErrorBanner";
 import Pagination from "../../components/Pagination";
 
+// Artist type
+type Artist = {
+  id: string;
+  label: string;
+  name?: string;
+};
+
 // Detailed Event type (based on your API response)
 type DetailedEvent = {
   id: string;
@@ -48,20 +55,21 @@ export default function EventsList() {
   });
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  // IMPORTANT : l'API est 0-based
-  const page = Number(params.get("page") || "0");
-  const size = Number(params.get("size") || "10");
+  // IMPORTANT : l'API est 0-based, mais l'URL est 1-based pour l'utilisateur
+  const pageParam = Number(params.get("page") || "1"); // Page 1-based from URL
+  const page = pageParam - 1; // Convert to 0-based for API
+  const size = Number(params.get("size") || "9"); // Match your API call
 
   useEffect(() => {
     let alive = true;
     setLoading(true);
     setError("");
 
-    // Load events
+    // Load events with pagination
     const loadEvents = api.get<SpringPage<Event>>(`/events`, { params: { page, size } });
     
-    // Load artists for the form
-    const loadArtists = api.get<SpringPage<Artist>>(`/artists`);
+    // Load all artists for the form (no pagination needed)
+    const loadArtists = api.get<SpringPage<Artist>>(`/artists`, { params: { size: 1000 } });
 
     Promise.all([loadEvents, loadArtists])
       .then(([eventsRes, artistsRes]) => {
@@ -115,8 +123,10 @@ export default function EventsList() {
       });
       setShowCreateForm(false);
       
-      // Refresh events list
-      window.location.reload();
+      // Refresh events list - go back to page 1 (displayed as page 1 to user)
+      const newParams = new URLSearchParams(window.location.search);
+      newParams.set('page', '1');
+      window.location.href = `${window.location.pathname}?${newParams.toString()}`;
     } catch (err: any) {
       setError(err.message || 'Erreur lors de la création de l\'événement');
     } finally {
@@ -140,7 +150,7 @@ export default function EventsList() {
       setShowCreateArtistForm(false);
       
       // Refresh artists list
-      const artistsRes = await api.get<SpringPage<Artist>>(`/artists`);
+      const artistsRes = await api.get<SpringPage<Artist>>(`/artists`, { params: { size: 1000 } });
       setArtists(artistsRes.data.content || []);
     } catch (err: any) {
       setError(err.message || 'Erreur lors de la création de l\'artiste');
@@ -494,8 +504,9 @@ export default function EventsList() {
 
           <div style={paginationContainerStyle}>
             <Pagination 
-              page={(currentPage ?? 0) + 1} 
-              totalPages={pageData.totalPages || 1} 
+              page={pageParam} 
+              totalPages={pageData.totalPages || 1}
+              size={size}
             />
           </div>
         </>
