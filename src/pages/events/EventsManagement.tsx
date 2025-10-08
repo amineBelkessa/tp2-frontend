@@ -269,8 +269,19 @@ export default function EventsManagement() {
   const containerStyle: React.CSSProperties = {
     background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     minHeight: "100vh",
+    height: "100vh",
+    width: "100vw",
+    margin: 0,
     padding: "20px",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
+    display: "flex",
+    flexDirection: "column",
+    overflow: "hidden",
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   };
 
   const headerStyle: React.CSSProperties = {
@@ -278,15 +289,17 @@ export default function EventsManagement() {
     fontWeight: 700,
     color: "#fff",
     textAlign: "center",
-    margin: "0 0 30px",
-    textShadow: "0 2px 4px rgba(0,0,0,0.3)"
+    margin: "0 0 20px",
+    textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+    flexShrink: 0
   };
 
   const searchBarStyle: React.CSSProperties = {
     display: "flex",
     justifyContent: "center",
-    marginBottom: 20,
-    gap: 12
+    marginBottom: 15,
+    gap: 12,
+    flexShrink: 0
   };
 
   const inputStyle: React.CSSProperties = {
@@ -317,7 +330,11 @@ export default function EventsManagement() {
     background: "rgba(255, 255, 255, 0.95)",
     borderRadius: 16,
     overflow: "hidden",
-    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)"
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    minHeight: 0
   };
 
   const thStyle: React.CSSProperties = {
@@ -423,7 +440,7 @@ export default function EventsManagement() {
       </form>
 
       {/* Action Buttons */}
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: 30 }}>
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: 20, flexShrink: 0 }}>
         <button
           style={buttonStyle}
           onClick={() => {
@@ -437,92 +454,96 @@ export default function EventsManagement() {
 
       <ErrorBanner message={error} />
       
-      {loading ? (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", color: "#fff", fontSize: 18 }}>
-          🎭 Chargement…
-        </div>
-      ) : pageData && pageData.content.length > 0 ? (
-        <>
-          <div style={tableStyle}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr>
-                  <th style={thStyle}>Nom</th>
-                  <th style={thStyle}>Dates</th>
-                  <th style={thStyle}>Artistes</th>
-                  <th style={{ ...thStyle, textAlign: "center" }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pageData.content.map((event) => (
-                  <tr key={event.id} style={{ transition: "background 0.2s ease" }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "#f7fafc"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
-                  >
-                    <td style={tdStyle}>
-                      <strong>{event.label}</strong>
-                    </td>
-                    <td style={tdStyle}>
-                      {new Date(event.startdate).toLocaleDateString()} - {new Date(event.enddate).toLocaleDateString()}
-                    </td>
-                    <td style={tdStyle}>
-                      {event.artists && event.artists.length > 0 ? (
-                        <span style={{ color: "#667eea", fontWeight: 500 }}>
-                          {event.artists.length} artiste{event.artists.length > 1 ? 's' : ''}
-                        </span>
-                      ) : (
-                        <span style={{ color: "#a0aec0", fontStyle: "italic" }}>Aucun</span>
-                      )}
-                    </td>
-                    <td style={{ ...tdStyle, textAlign: "center" }}>
-                      <button
-                        onClick={() => handleShowEventDetails(event.id)}
-                        style={{ ...actionButtonStyle, background: "#4299e1", color: "#fff" }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = "#3182ce"}
-                        onMouseLeave={(e) => e.currentTarget.style.background = "#4299e1"}
-                      >
-                        👁️ Voir
-                      </button>
-                      <button
-                        onClick={() => openEditForm(event.id)}
-                        style={{ ...actionButtonStyle, background: "#48bb78", color: "#fff" }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = "#38a169"}
-                        onMouseLeave={(e) => e.currentTarget.style.background = "#48bb78"}
-                      >
-                        ✏️ Modifier
-                      </button>
-                      <button
-                        onClick={() => openDeleteConfirm(event.id)}
-                        style={{ ...actionButtonStyle, background: "#f56565", color: "#fff", marginRight: 0 }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = "#e53e3e"}
-                        onMouseLeave={(e) => e.currentTarget.style.background = "#f56565"}
-                      >
-                        🗑️ Supprimer
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, marginBottom: 20 }}>
+        {loading ? (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flex: 1, color: "#fff", fontSize: 18 }}>
+            🎭 Chargement…
           </div>
+        ) : pageData && pageData.content.length > 0 ? (
+          <>
+            <div style={tableStyle}>
+              <div style={{ flex: 1, overflow: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead style={{ position: "sticky", top: 0, zIndex: 1 }}>
+                    <tr>
+                      <th style={thStyle}>Nom</th>
+                      <th style={thStyle}>Dates</th>
+                      <th style={thStyle}>Artistes</th>
+                      <th style={{ ...thStyle, textAlign: "center" }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pageData.content.map((event) => (
+                      <tr key={event.id} style={{ transition: "background 0.2s ease" }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = "#f7fafc"}
+                        onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                      >
+                        <td style={tdStyle}>
+                          <strong>{event.label}</strong>
+                        </td>
+                        <td style={tdStyle}>
+                          {new Date(event.startdate).toLocaleDateString()} - {new Date(event.enddate).toLocaleDateString()}
+                        </td>
+                        <td style={tdStyle}>
+                          {event.artists && event.artists.length > 0 ? (
+                            <span style={{ color: "#667eea", fontWeight: 500 }}>
+                              {event.artists.length} artiste{event.artists.length > 1 ? 's' : ''}
+                            </span>
+                          ) : (
+                            <span style={{ color: "#a0aec0", fontStyle: "italic" }}>Aucun</span>
+                          )}
+                        </td>
+                        <td style={{ ...tdStyle, textAlign: "center" }}>
+                          <button
+                            onClick={() => handleShowEventDetails(event.id)}
+                            style={{ ...actionButtonStyle, background: "#4299e1", color: "#fff" }}
+                            onMouseEnter={(e) => e.currentTarget.style.background = "#3182ce"}
+                            onMouseLeave={(e) => e.currentTarget.style.background = "#4299e1"}
+                          >
+                            👁️ Voir
+                          </button>
+                          <button
+                            onClick={() => openEditForm(event.id)}
+                            style={{ ...actionButtonStyle, background: "#48bb78", color: "#fff" }}
+                            onMouseEnter={(e) => e.currentTarget.style.background = "#38a169"}
+                            onMouseLeave={(e) => e.currentTarget.style.background = "#48bb78"}
+                          >
+                            ✏️ Modifier
+                          </button>
+                          <button
+                            onClick={() => openDeleteConfirm(event.id)}
+                            style={{ ...actionButtonStyle, background: "#f56565", color: "#fff", marginRight: 0 }}
+                            onMouseEnter={(e) => e.currentTarget.style.background = "#e53e3e"}
+                            onMouseLeave={(e) => e.currentTarget.style.background = "#f56565"}
+                          >
+                            🗑️ Supprimer
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-          <div style={{ display: "flex", justifyContent: "center", marginTop: 40, paddingBottom: 40 }}>
-            <Pagination 
-              page={pageParam} 
-              totalPages={pageData.totalPages || 1}
-              size={size}
-            />
+            <div style={{ flexShrink: 0, display: "flex", justifyContent: "center", marginTop: 20 }}>
+              <Pagination 
+                page={pageParam} 
+                totalPages={pageData.totalPages || 1}
+                size={size}
+              />
+            </div>
+          </>
+        ) : (
+          <div style={{ textAlign: "center", padding: "60px 20px", color: "#fff", flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>🎬</div>
+            <div style={{ fontSize: 20, fontWeight: 600 }}>Aucun événement trouvé</div>
+            <div style={{ fontSize: 16, opacity: 0.8 }}>
+              {searchTerm ? "Essayez une autre recherche" : "Créez votre premier événement"}
+            </div>
           </div>
-        </>
-      ) : (
-        <div style={{ textAlign: "center", padding: "60px 20px", color: "#fff" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🎬</div>
-          <div style={{ fontSize: 20, fontWeight: 600 }}>Aucun événement trouvé</div>
-          <div style={{ fontSize: 16, opacity: 0.8 }}>
-            {searchTerm ? "Essayez une autre recherche" : "Créez votre premier événement"}
-          </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Create/Edit Event Form */}
       {(showCreateForm || showEditForm) && (

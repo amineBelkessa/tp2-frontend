@@ -70,7 +70,7 @@ export default function ArtistsManagement() {
 
     const apiParams: any = { page, size };
     if (searchTerm) {
-      apiParams.search = searchTerm;
+      apiParams.label = searchTerm;
     }
 
     api.get<SpringPage<Artist>>(`/artists`, { params: apiParams })
@@ -208,8 +208,21 @@ export default function ArtistsManagement() {
   const containerStyle: React.CSSProperties = {
     background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
     minHeight: "100vh",
+    height: "100vh",
+    width: "100vw",
+    margin: 0,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
     padding: "20px",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
+    overflow: "auto",
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   };
 
   const headerStyle: React.CSSProperties = {

@@ -4,12 +4,21 @@ export default function HomePage() {
   const containerStyle: React.CSSProperties = {
     background: "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
     minHeight: "100vh",
+    height: "100vh",
+    width: "100vw",
+    margin: 0,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     padding: "20px",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
+    overflow: "auto",
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   };
 
   const titleStyle: React.CSSProperties = {
