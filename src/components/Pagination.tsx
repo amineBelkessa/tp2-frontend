@@ -1,26 +1,31 @@
-import { Link, useLocation } from "react-router-dom";
-type Props = { page: number; totalPages: number };
-
-function buildHref(search: string, targetPage: number) {
-  const p = new URLSearchParams(search);
-  p.set("page", String(targetPage));
-  return `?${p.toString()}`;
+interface PaginationProps {
+  page: number;
+  totalPages: number;
+  onPageChange: (newPage: number) => void;
 }
 
-export default function Pagination({ page, totalPages }: Props) {
-  const { search, pathname } = useLocation();
-  if (totalPages <= 1) return null;
-  const prev = Math.max(1, page - 1);
-  const next = Math.min(totalPages, page + 1);
-  const btn: React.CSSProperties = { padding:"6px 10px", border:"1px solid #ddd", borderRadius:6, textDecoration:"none" };
-
+export const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
   return (
-    <nav style={{display:"flex",gap:8,alignItems:"center",marginTop:16}} aria-label="Pagination">
-      <Link to={pathname + buildHref(search, 1)} style={btn}>«</Link>
-      <Link to={pathname + buildHref(search, prev)} style={btn}>‹</Link>
-      <span>Page {page} / {totalPages}</span>
-      <Link to={pathname + buildHref(search, next)} style={btn}>›</Link>
-      <Link to={pathname + buildHref(search, totalPages)} style={btn}>»</Link>
-    </nav>
+    <div className="flex gap-3 justify-center mt-6">
+      <button
+        onClick={() => onPageChange(page - 1)}
+        disabled={page === 0}
+        className="px-3 py-1 border rounded disabled:bg-gray-300"
+      >
+        Précédent
+      </button>
+
+      <span className="px-3 py-1 bg-gray-100 rounded">
+        Page {page + 1} / {totalPages}
+      </span>
+
+      <button
+        onClick={() => onPageChange(page + 1)}
+        disabled={page + 1 >= totalPages}
+        className="px-3 py-1 border rounded disabled:bg-gray-300"
+      >
+        Suivant
+      </button>
+    </div>
   );
-}
+};

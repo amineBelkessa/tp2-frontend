@@ -1,8 +1,9 @@
-export default function ErrorBanner({ message }: { message: string }) {
+export const ErrorBanner = ({ message }: { message: string }) => {
   if (!message) return null;
+
   return (
-    <div style={{padding:12,border:"1px solid #f5c2c7",background:"#f8d7da",color:"#842029",borderRadius:8,margin:"12px 0"}}>
+    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-3">
       {message}
     </div>
   );
-}
+};
